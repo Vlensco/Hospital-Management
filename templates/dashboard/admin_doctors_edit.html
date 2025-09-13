@@ -1,0 +1,101 @@
+{% extends 'dashboard/base_admin.html' %}
+
+{% load static %}
+
+{% block doctors_active %}active{% endblock %}
+
+{% block title %}Admin Dashboard - Edit Doctors{% endblock %}
+
+{% block page_title %}Edit Doctor Management{% endblock %}
+
+{% block content %}
+
+<style>
+  .avatar-preview {
+    width: 10cm;
+    height: 10cm;
+    border-radius: 10px;
+    object-fit: cover;
+    margin-bottom: 1rem;
+    border: 1px solid #ccc;
+  }
+</style>
+
+<div class="container mt-4" style="max-width: 900px;">
+  <div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center">
+      <h4>Edit Doctor</h4>
+    </div>
+    <div class="card-body">
+      <form method="POST" enctype="multipart/form-data" action="{% url 'save_edit_doctor' %}">
+        {% csrf_token %}
+        <input type="hidden" name="user_id" value="{{ user.id }}">
+        
+        <div class="row mb-3">
+          <div class="col-md-6">
+            <label>First Name</label>
+            <input type="text" class="form-control" name="first_name" value="{{ user.first_name }}" required>
+          </div>
+          <div class="col-md-6">
+            <label>Last Name</label>
+            <input type="text" class="form-control" name="last_name" value="{{ user.last_name }}" required>
+          </div>
+        </div>
+
+        <label>Username</label>
+        <input type="text" class="form-control mb-3" name="username" value="{{ user.username }}" required>
+
+        <label>Email</label>
+        <input type="email" class="form-control mb-3" name="email" value="{{ user.email }}" required>
+
+        <label>Password <small>(leave blank to keep unchanged)</small></label>
+        <input type="password" class="form-control mb-3" name="password">
+
+        <div class="row mb-3">
+          <div class="col-md-6">
+            <label>Birthday</label>
+            <input type="date" class="form-control" name="birthday" value="{{ user.birthday|date:'Y-m-d' }}" required>
+          </div>
+          <div class="col-md-6">
+            <label>Gender</label>
+            <select class="form-control" name="gender" required>
+              <option value="">Select gender</option>
+              <option value="Male" {% if user.gender == 'Male' %}selected{% endif %}>Male</option>
+              <option value="Female" {% if user.gender == 'Female' %}selected{% endif %}>Female</option>
+              <option value="Other" {% if user.gender == 'Other' %}selected{% endif %}>Other</option>
+            </select>
+          </div>
+        </div>
+
+        <label>Specialty</label>
+        <select class="form-control mb-3" name="specialty" required>
+          {% for specialty in specialties %}
+            <option value="{{ specialty.id }}" {% if doctor.specialty.id == specialty.id %}selected{% endif %}>{{ specialty.name }}</option>
+          {% endfor %}
+        </select>
+
+        <label>Bio</label>
+        <textarea class="form-control mb-3" name="bio" rows="3">{{ doctor.bio }}</textarea>
+
+        <div class="mb-3">
+        <label class="form-label d-block">Current Profile Avatar:</label>
+        {% if user.profile_avatar %}
+        <img src="{{ user.profile_avatar.url }}" alt="Avatar" class="avatar-preview">
+        {% else %}
+        <p class="text-muted">No avatar uploaded.</p>
+        {% endif %}
+        </div>
+
+        <label class="form-label">Upload New Avatar (optional)</label>
+        <input type="file" class="form-control mb-4" name="profile_avatar">
+
+        <div class="d-flex justify-content-between">
+            <a href="{% url 'admin_doctor_list' %}" class="btn btn-secondary">← Back</a>
+            <button type="submit" class="btn btn-primary">Update Doctor</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

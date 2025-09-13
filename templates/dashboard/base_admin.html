@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}Hospital Admin{% endblock %}</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+  <style>
+    @media print {
+      body {
+        margin: 0;
+        padding: 0;
+        background: white;
+      }
+
+      .no-print,
+      .no-print * {
+        display: none !important;
+      }
+
+      .actions-col {
+        display: none !important;
+      }
+
+      .print-wrapper {
+        width: 100%;
+        margin: 0 auto;
+      }
+
+      .card,
+      .card-body,
+      .table {
+        border: none !important;
+        box-shadow: none !important;
+        width: 100% !important;
+      }
+
+      table {
+        width: 100% !important;
+        font-size: 12pt;
+        border-collapse: collapse;
+      }
+
+      table th,
+      table td {
+        border: 1px solid #000 !important;
+        padding: 8px;
+        text-align: center;
+      }
+
+      @page {
+        margin: 0;
+      }
+
+      html, body {
+        width: 100%;
+        height: 100%;
+        overflow: visible;
+      }
+    }
+    
+    :root {
+      --primary-color: #4e73df;
+      --secondary-color: #f8f9fc;
+      --accent-color: #4e73df;
+      --text-dark: #5a5c69;
+      --card-border-radius: 0.75rem;
+      --transition-speed: 0.3s;
+    }
+    
+    body {
+      font-family: 'Nunito', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      background-color: #f8f9fc;
+      display: flex;
+      min-height: 100vh;
+      margin: 0;
+      color: var(--text-dark);
+    }
+    
+    /* Sidebar Styles */
+    .sidebar {
+      width: 250px;
+      background: linear-gradient(180deg, #4e73df 10%, #224abe 100%);
+      color: white;
+      transition: all var(--transition-speed);
+      z-index: 100;
+    }
+    
+    .sidebar-brand {
+      padding: 1.5rem 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(0, 0, 0, 0.1);
+      margin-bottom: 1rem;
+    }
+    
+    .sidebar-brand h4 {
+      margin: 0;
+      font-weight: 700;
+      font-size: 1.2rem;
+    }
+    
+    .sidebar-brand i {
+      margin-right: 0.5rem;
+      font-size: 1.5rem;
+    }
+    
+    .sidebar-menu {
+      padding: 0 0.75rem;
+    }
+    
+    .sidebar-divider {
+      border-top: 1px solid rgba(255, 255, 255, 0.15);
+      margin: 1rem 0;
+    }
+    
+    .sidebar-heading {
+      text-transform: uppercase;
+      font-size: 0.65rem;
+      font-weight: 800;
+      letter-spacing: 0.13rem;
+      padding: 0 1rem;
+      margin-bottom: 0.5rem;
+      opacity: 0.6;
+    }
+    
+    .nav-item {
+      margin-bottom: 0.25rem;
+      position: relative;
+    }
+    
+    .nav-link {
+      display: flex;
+      align-items: center;
+      padding: 0.75rem 1rem;
+      color: rgba(255, 255, 255, 0.8);
+      text-decoration: none;
+      border-radius: 0.35rem;
+      transition: all var(--transition-speed);
+    }
+    
+    .nav-link:hover {
+      color: white;
+      background-color: rgba(255, 255, 255, 0.1);
+    }
+    
+    .nav-link.active {
+      color: white;
+      background-color: rgba(255, 255, 255, 0.15);
+      font-weight: 700;
+    }
+    
+    .nav-link i {
+      margin-right: 0.75rem;
+      width: 1.25rem;
+      text-align: center;
+    }
+    
+    /* Main Content Styles */
+    .main-content {
+      flex-grow: 1;
+      transition: margin-left var(--transition-speed);
+      padding: 1.5rem;
+    }
+    
+    .page-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.5rem;
+    }
+    
+    .page-header h1 {
+      font-size: 1.75rem;
+      font-weight: 700;
+      color: #5a5c69;
+      margin: 0;
+    }
+    
+    .top-nav {
+      display: flex;
+      align-items: center;
+    }
+    
+    .search-bar {
+      position: relative;
+      margin-right: 1rem;
+    }
+    
+    .search-bar input {
+      border-radius: 2rem;
+      padding-left: 2.5rem;
+      background-color: #f8f9fc;
+      border: 1px solid #e3e6f0;
+    }
+    
+    .search-bar i {
+      position: absolute;
+      left: 1rem;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #d1d3e2;
+    }
+    
+    .user-profile {
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+    }
+    
+    .user-profile .avatar {
+      width: 2.5rem;
+      height: 2.5rem;
+      border-radius: 50%;
+      background-color: #eaecf4;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-left: 0.5rem;
+    }
+    
+    /* Dashboard Cards */
+    .stat-card {
+      border: none;
+      border-radius: var(--card-border-radius);
+      box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.1);
+      margin-bottom: 1.5rem;
+      transition: transform var(--transition-speed);
+    }
+    
+    .stat-card:hover {
+      transform: translateY(-3px);
+    }
+    
+    .stat-card .card-body {
+      padding: 1.25rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    
+    .stat-card .icon-circle {
+      height: 3rem;
+      width: 3rem;
+      border-radius: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .stat-card .icon-circle i {
+      font-size: 1.5rem;
+      color: white;
+    }
+    
+    .stat-card .stat-info h5 {
+      text-transform: uppercase;
+      font-size: 0.7rem;
+      font-weight: 700;
+      color: #b7b9cc;
+      margin-bottom: 0.25rem;
+    }
+    
+    .stat-card .stat-info .stat-value {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--text-dark);
+      margin: 0;
+    }
+    
+    /* Card Colors */
+    .primary-card {
+      border-left: 0.25rem solid #4e73df;
+    }
+    
+    .primary-card .icon-circle {
+      background-color: #4e73df;
+    }
+    
+    .success-card {
+      border-left: 0.25rem solid #1cc88a;
+    }
+    
+    .success-card .icon-circle {
+      background-color: #1cc88a;
+    }
+    
+    .warning-card {
+      border-left: 0.25rem solid #f6c23e;
+    }
+    
+    .warning-card .icon-circle {
+      background-color: #f6c23e;
+    }
+    
+    .danger-card {
+      border-left: 0.25rem solid #e74a3b;
+    }
+    
+    .danger-card .icon-circle {
+      background-color: #e74a3b;
+    }
+    
+    /* Charts and Tables Section */
+    .content-row {
+      display: flex;
+      flex-wrap: wrap;
+      margin-right: -0.75rem;
+      margin-left: -0.75rem;
+    }
+    
+    .chart-card {
+      border: none;
+      border-radius: var(--card-border-radius);
+      box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.1);
+      margin-bottom: 1.5rem;
+    }
+    
+    .chart-card .card-header {
+      background-color: #f8f9fc;
+      border-bottom: 1px solid #e3e6f0;
+      padding: 1rem 1.25rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    
+    .chart-card .card-header h6 {
+      color: #4e73df;
+      font-weight: 700;
+      font-size: 1rem;
+      margin: 0;
+    }
+    
+    .chart-card .card-body {
+      padding: 1.25rem;
+    }
+    
+    /* Table Styles */
+    .table-responsive {
+      margin-top: 1rem;
+    }
+    
+    .table {
+      color: var(--text-dark);
+    }
+    
+    .table thead th {
+      background-color: #f8f9fc;
+      border-bottom: 2px solid #e3e6f0;
+      font-weight: 700;
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05rem;
+    }
+    
+    .table tbody tr:hover {
+      background-color: rgba(78, 115, 223, 0.05);
+    }
+    
+    /* Responsive */
+    @media (max-width: 768px) {
+      .sidebar {
+        width: 80px;
+      }
+      
+      .sidebar-brand h4,
+      .nav-link span {
+        display: none;
+      }
+      
+      .sidebar-brand i {
+        margin-right: 0;
+      }
+      
+      .nav-link {
+        justify-content: center;
+        padding: 0.75rem;
+      }
+      
+      .nav-link i {
+        margin-right: 0;
+        font-size: 1.25rem;
+      }
+      
+      .main-content {
+        margin-left: 80px;
+      }
+      
+      .content-row {
+        flex-direction: column;
+      }
+    }
+
+    /* Additional styles can be added in each child template */
+    {% block extra_css %}{% endblock %}
+  </style>
+</head>
+
+<body>
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <i class="fas fa-hospital"></i>
+      <h4>Hospital Admin</h4>
+    </div>
+    
+    <div class="sidebar-menu">
+      <div class="sidebar-heading">Core</div>
+      <ul class="nav flex-column">
+        <li class="nav-item">
+          <a href="{% url 'admin_dashboard' %}" class="nav-link {% block dashboard_active %}{% endblock %}">
+            <i class="fas fa-fw fa-tachometer-alt"></i>
+            <span>Dashboard</span>
+          </a>
+        </li>
+      </ul>
+      
+      <hr class="sidebar-divider">
+      
+      <div class="sidebar-heading">Management</div>
+      <ul class="nav flex-column">
+        <li class="nav-item">
+          <a href="{% url 'admin_doctor_list' %}" class="nav-link {% block doctors_active %}{% endblock %}">
+            <i class="fas fa-fw fa-user-md"></i>
+            <span>Doctors</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="{% url 'admin_patient_list' %}" class="nav-link {% block patients_active %}{% endblock %}">
+            <i class="fas fa-fw fa-procedures"></i>
+            <span>Patients</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="{% url 'admin_user_list' %}" class="nav-link {% block users_active %}{% endblock %}">
+            <i class="fas fa-fw fa-users"></i>
+            <span>Users</span>
+          </a>
+        </li>
+      </ul>
+      
+      <hr class="sidebar-divider">
+      
+      <div class="sidebar-heading">System</div>
+      <ul class="nav flex-column">
+        <li class="nav-item">
+          <a href="#" class="nav-link {% block settings_active %}{% endblock %}">
+            <i class="fas fa-fw fa-cog"></i>
+            <span>Settings</span>
+          </a>
+        </li>
+        <li class="nav-item">
+            <form id="logout-form" action="{% url 'admin_logout' %}" method="POST" style="display: none;">
+                {% csrf_token %}
+            </form>
+            <a href="#" class="nav-link" onclick="confirmLogoutSwal()">
+                <i class="fas fa-fw fa-sign-out-alt"></i>
+                <span>Logout</span>
+            </a>
+        </li>
+      </ul>
+    </div>
+  </aside>
+
+  <!-- Main Content -->
+  <div class="main-content">
+    <div class="page-header">
+      <h1>{% block page_title %}Dashboard{% endblock %}</h1>
+      
+      <div class="top-nav">
+        <div class="search-bar">
+          <input type="text" class="form-control" placeholder="Search...">
+          <i class="fas fa-search"></i>
+        </div>
+        
+        <div class="user-profile">
+          <span class="me-2">{{ request.user.username }}</span>
+          <div class="avatar">
+            <i class="fas fa-user"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Main Content Area -->
+    {% block content %}
+    <!-- This is where the content from child templates will be inserted -->
+    {% endblock %}
+  </div>
+  
+  <!-- SweetAlert Messages -->
+  {% if messages %}
+  <script>
+    {% for message in messages %}
+      Swal.fire({
+        icon: "{{ message.tags }}",
+        title: "{{ message.tags|title }}",
+        text: "{{ message }}",
+        confirmButtonText: "OK"
+      });
+    {% endfor %}
+  </script>
+  {% endif %}
+  
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  
+  <!-- Logout confirmation script -->
+  <script>
+    function confirmLogoutSwal() {
+        const username = "{{ request.user.username }}";
+
+        Swal.fire({
+            title: `Apakah kamu yakin ingin logout, ${username}?`,
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Ya, Logout!',
+            cancelButtonText: 'Batal'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                document.getElementById('logout-form').submit();
+            }
+        });
+    }
+  </script>
+  {% block extra_scripts %}
+  <!-- Additional scripts can be added in each child template -->
+  {% endblock %}
+</body>
+</html>

@@ -1,0 +1,84 @@
+{% extends 'dashboard/base_admin.html' %}
+
+{% load static %}
+
+{% block doctors_active %}active{% endblock %}
+
+{% block title %}Admin Dashboard - Detail Doctors{% endblock %}
+
+{% block page_title %}Detail Doctor Management{% endblock %}
+
+{% block content %}
+
+<style>
+  .avatar-side {
+    width: 250px;
+    height: 250px;
+    object-fit: cover;
+    border-radius: 12px;
+    border: 1px solid #ccc;
+  }
+  .info-label {
+    font-weight: 600;
+    width: 120px;
+  }
+</style>
+
+<div class="container mt-4" style="max-width: 900px;">
+  <div class="card">
+    <div class="card-header">
+      <h4>Doctor Details</h4>
+    </div>
+    <div class="card-body">
+      <div class="row align-items-start">
+        <!-- Foto Dokter -->
+        <div class="col-md-4 text-center">
+          {% if user.profile_avatar %}
+            <img src="{{ user.profile_avatar.url }}" alt="Avatar" class="avatar-side">
+          {% else %}
+            <img src="{% static 'default-avatar.png' %}" alt="Avatar" class="avatar-side">
+          {% endif %}
+        </div>
+
+        <!-- Info Dokter -->
+        <div class="col-md-8">
+          <div class="mb-2 d-flex">
+            <div class="info-label">Full Name:</div>
+            <div>{{ user.get_full_name }}</div>
+          </div>
+          <div class="mb-2 d-flex">
+            <div class="info-label">Username:</div>
+            <div>{{ user.username }}</div>
+          </div>
+          <div class="mb-2 d-flex">
+            <div class="info-label">Email:</div>
+            <div>{{ user.email }}</div>
+          </div>
+          <div class="mb-2 d-flex">
+            <div class="info-label">Birthday:</div>
+            <div>{{ user.birthday|date:"Y-m-d" }}</div>
+          </div>
+          <div class="mb-2 d-flex">
+            <div class="info-label">Gender:</div>
+            <div>{{ user.gender }}</div>
+          </div>
+          <div class="mb-2 d-flex">
+            <div class="info-label">Specialty:</div>
+            <div>{{ doctor.specialty.name|default:"-" }}</div>
+            </div>
+            <div class="mb-2 d-flex">
+            <div class="info-label">Bio:</div>
+            <div>{{ doctor.bio|linebreaks|default:"-" }}</div>
+           </div>
+        </div>
+      </div>
+
+      <!-- Tombol Back -->
+      <div class="mt-4">
+        <a href="{% url 'admin_doctor_list' %}" class="btn btn-secondary">← Back to Doctor List</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

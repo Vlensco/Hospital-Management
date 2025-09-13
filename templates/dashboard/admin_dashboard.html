@@ -1,0 +1,275 @@
+{% extends 'dashboard/base_admin.html' %}
+
+{% block title %}Dashboard - Hospital Admin{% endblock %}
+
+{% block dashboard_active %}active{% endblock %}
+
+{% block page_title %}Dashboard{% endblock %}
+
+{% block content %}
+  <!-- Stats Cards - First Row -->
+  <div class="row">
+    <div class="col-xl-3 col-md-6">
+      <div class="card stat-card primary-card">
+        <div class="card-body">
+          <div class="stat-info">
+            <h5>Total Doctors</h5>
+            <p class="stat-value">{{ total_doctors }}</p>
+          </div>
+          <div class="icon-circle">
+            <i class="fas fa-user-md"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="col-xl-3 col-md-6">
+      <div class="card stat-card success-card">
+        <div class="card-body">
+          <div class="stat-info">
+            <h5>Total Patients</h5>
+            <p class="stat-value">{{ total_patients }}</p>
+          </div>
+          <div class="icon-circle">
+            <i class="fas fa-procedures"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="col-xl-3 col-md-6">
+      <div class="card stat-card warning-card">
+        <div class="card-body">
+          <div class="stat-info">
+            <h5>Total Users</h5>
+            <p class="stat-value">{{ total_users }}</p>
+          </div>
+          <div class="icon-circle">
+            <i class="fas fa-users"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="col-xl-3 col-md-6">
+      <div class="card stat-card danger-card">
+        <div class="card-body">
+          <div class="stat-info">
+            <h5>Total Specialties</h5>
+            <p class="stat-value">{{ total_specialties }}</p>
+          </div>
+          <div class="icon-circle">
+            <i class="fas fa-stethoscope"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Stats Cards - Second Row with New Metrics -->
+  <div class="row mt-4">
+    <div class="col-xl-6 col-md-6">
+      <div class="card stat-card info-card">
+        <div class="card-body">
+          <div class="stat-info">
+            <h5>Total Appointments</h5>
+            <p class="stat-value">{{ total_appointments }}</p>
+          </div>
+          <div class="icon-circle">
+            <i class="fas fa-calendar-check"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="col-xl-6 col-md-6">
+      <div class="card stat-card secondary-card">
+        <div class="card-body">
+          <div class="stat-info">
+            <h5>Total Blogs</h5>
+            <p class="stat-value">{{ total_blogs }}</p>
+          </div>
+          <div class="icon-circle">
+            <i class="fas fa-blog"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Charts and Tables -->
+  <div class="row content-row mt-4">
+    <div class="col-lg-8">
+      <div class="card chart-card">
+        <div class="card-header">
+          <h6>Patient Statistics</h6>
+          <div class="dropdown">
+            <button class="btn btn-sm btn-light dropdown-toggle" type="button" id="dropdownMenuButton2" data-bs-toggle="dropdown" aria-expanded="false">
+              <i class="fas fa-ellipsis-v"></i>
+            </button>
+            <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton2">
+              <li><a class="dropdown-item" href="#">Export</a></li>
+              <li><a class="dropdown-item" href="#">Print</a></li>
+            </ul>
+          </div>
+        </div>
+        <div class="card-body">
+          <canvas id="user_id" height="300"></canvas>
+        </div>
+      </div>
+    </div>
+    
+    <div class="col-lg-4">
+      <div class="card chart-card">
+        <div class="card-header">
+          <h6>Department Distribution</h6>
+          <div class="dropdown">
+            <button class="btn btn-sm btn-light dropdown-toggle" type="button" id="dropdownMenuButton2" data-bs-toggle="dropdown" aria-expanded="false">
+              <i class="fas fa-ellipsis-v"></i>
+            </button>
+            <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton2">
+              <li><a class="dropdown-item" href="#">Export</a></li>
+              <li><a class="dropdown-item" href="#">Print</a></li>
+            </ul>
+          </div>
+        </div>
+        <div class="card-body">
+          <canvas id="specialty_block" height="300"></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Recent Activities -->
+  <div class="card chart-card mt-4">
+    <div class="card-header">
+      <h6>Recent Activities</h6>
+      <div class="dropdown">
+            <button class="btn btn-sm btn-light dropdown-toggle" type="button" id="dropdownMenuButton2" data-bs-toggle="dropdown" aria-expanded="false">
+              <i class="fas fa-ellipsis-v"></i>
+            </button>
+            <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton2">
+              <li><a class="dropdown-item" href="#">Export</a></li>
+              <li><a class="dropdown-item" href="#">Print</a></li>
+            </ul>
+          </div>
+    </div>
+    <div class="card-body">
+      <div class="table-responsive">
+        <table class="table table-hover">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Doctor Name</th>
+              <th>Patient Name</th>
+              <th>Summary</th>
+              <th>Description</th>
+              <th>Start Date</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+<tbody>
+        {% for appointment in recent_appointments %}
+        <tr class="border-t">
+          <td class="px-4 py-2">{{ forloop.counter }}</td>
+          <td class="px-4 py-2">{{ appointment.doctor.user.get_full_name }}</td>
+          <td class="px-4 py-2">{{ appointment.patient.user.get_full_name }}</td>
+          <td class="px-4 py-2">{{ appointment.summary|truncatechars:20 }}</td>
+          <td class="px-4 py-2">{{ appointment.description|truncatechars:30 }}</td>
+          <td class="px-4 py-2">{{ appointment.start_date|date:"d M Y" }}</td>
+          <td class="px-4 py-2">
+            {% if appointment.status.status == 'Accepted' %}
+              <span class="text-green-600 font-medium">Accepted</span>
+            {% elif appointment.status.status == 'Waited' %}
+              <span class="text-yellow-600 font-medium">Waited</span>
+            {% elif appointment.status.status == 'Cancelled' %}
+              <span class="text-red-600 font-medium">Cancelled</span>
+            {% else %}
+              <span class="text-gray-500">{{ appointment.status.status }}</span>
+            {% endif %}
+          </td>
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="7" class="text-center py-4 text-gray-400">No recent appointments</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+{% endblock %}
+
+{% block extra_scripts %}
+  <!-- Charts -->
+  <script>
+    // Patient Statistics Chart
+    const patientCtx = document.getElementById('user_id').getContext('2d');
+    const patientChart = new Chart(patientCtx, {
+      type: 'line',
+      data: {
+        labels: ['User 1', 'User 2', 'User 3'],
+        datasets: [{
+          label: 'New Patients',
+          data: [3, 1, 2],
+          fill: false,
+          borderColor: '#4e73df',
+          tension: 0.1
+        }, {
+          label: 'Returning Patients',
+          data: [2, 3, 1],
+          fill: false,
+          borderColor: '#1cc88a',
+          tension: 0.1
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+          y: {
+            beginAtZero: true
+          }
+        }
+      }
+    });
+    
+    // Department Distribution Chart
+    const deptCtx = document.getElementById('specialty_block').getContext('2d');
+    const deptChart = new Chart(deptCtx, {
+      type: 'doughnut',
+      data: {
+        labels: ['Cardiology', 'Neurology', 'Orthopedics', 'Pediatrics', 'Dermatology'],
+        datasets: [{
+          data: [25, 20, 18, 15, 22],
+          backgroundColor: [
+            '#4e73df',
+            '#1cc88a',
+            '#f6c23e',
+            '#e74a3b',
+            '#36b9cc'
+          ],
+          hoverBackgroundColor: [
+            '#2e59d9',
+            '#17a673',
+            '#f4b619',
+            '#e02d1b',
+            '#2c9faf'
+          ],
+          borderWidth: 1
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            position: 'bottom'
+          }
+        },
+        cutout: '70%'
+      }
+    });
+  </script>
+{% endblock %}

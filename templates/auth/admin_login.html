@@ -1,0 +1,95 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Login - Hospital Management</title>
+    <link rel="icon" type="image/x-icon" href="{% static 'img/icon_app.png' %}">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <style>
+        body {
+            background-image: url('{% static "images/hospital-bg.jpg" %}');
+            background-size: cover;
+        }
+    </style>
+</head>
+<body class="flex items-center justify-center min-h-screen bg-gray-100 bg-opacity-80">
+    <div class="bg-white shadow-lg rounded-lg p-8 w-full max-w-md border-2 border-blue-200">
+        <h1 class="text-2xl font-bold text-center text-blue-700 mb-6">Admin Login</h1>
+
+        {% if messages %}
+            {% for message in messages %}
+                <script>
+                    Swal.fire({
+                        icon: "{{ message.tags }}",
+                        title: "{{ message|escapejs }}",
+                        showConfirmButton: false,
+                        timer: 3000
+                    });
+                </script>
+            {% endfor %}
+        {% endif %}
+
+        <form method="post">
+            {% csrf_token %}
+            <div class="mb-4">
+                <label class="block text-gray-700 font-medium mb-2">Username</label>
+                <input type="text" name="username" required class="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+            </div>
+            <div class="mb-6">
+                <label class="block text-gray-700 font-medium mb-2">Password</label>
+                <input id="password" type="password" name="password" required class="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <div class="flex items-center mt-2">
+                    <input type="checkbox" id="show-password" class="mr-2" onclick="togglePassword()">
+                    <label for="show-password" class="text-sm text-gray-700">Show password</label>
+                </div>
+            </div>
+            <button type="submit" class="w-full bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 transition duration-200">
+                Login
+            </button>
+            <p class="text-sm mt-4 text-center">
+                <a href="{% url 'password-reset' %}" class="text-blue-500 hover:underline">Forgot Password?</a>
+            </p>
+        </form>
+    </div>
+
+    <script>
+        function togglePassword() {
+            const password = document.getElementById("password");
+            password.type = password.type === "password" ? "text" : "password";
+        }
+    </script>
+
+    {% if messages %}
+<script>
+  {% for message in messages %}
+    Swal.fire({
+      title: "{{ message.tags|title }}",
+      text: "{{ message }}",
+      icon: "{{ message.tags }}",
+      confirmButtonText: "OK"
+    });
+  {% endfor %}
+</script>
+{% endif %}
+
+
+{% if messages %}
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    {% for message in messages %}
+        Swal.fire({
+            icon: '{% if message.tags == "success" %}success{% elif message.tags == "error" %}error{% else %}info{% endif %}',
+            title: '{{ message }}',
+            confirmButtonText: 'OK',
+            timer: 3000,
+            timerProgressBar: true
+        });
+    {% endfor %}
+</script>
+{% endif %}
+
+</body>
+</html>
